@@ -1,3 +1,6 @@
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)
+![Tests](https://img.shields.io/badge/tests-passing-brightgreen)
+
 # Database Adapter Pattern
 
 This repository demonstrates the database adapter pattern for building resilient, testable, and database-agnostic applications. The pattern provides abstraction between your business logic and database implementations, enabling easy switching between databases and fast testing without infrastructure.
