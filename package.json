@@ -1,0 +1,32 @@
+{
+  "name": "database-reliability",
+  "version": "1.0.0",
+  "description": "Database adapter pattern for resilience and abstraction",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "start": "node dist/server.js",
+    "dev": "ts-node src/server.ts",
+    "db:migrate:latest": "knex migrate:latest --knexfile db/knexfile.js",
+    "db:migrate:rollback": "knex migrate:rollback --knexfile db/knexfile.js",
+    "db:seed:run": "knex seed:run --knexfile db/knexfile.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "knex": "^3.1.0",
+    "pg": "^8.11.3",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.17",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
+  },
+  "private": true
+}
