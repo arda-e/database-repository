@@ -1,6 +1,6 @@
-# Database Reliability Series
+# Backend Reliability Series
 
-Building production-grade database layers from first principles
+Building production-grade backend layers from first principles
 
 A comprehensive guide to building resilient, flexible, and maintainable database layers in TypeScript. Each post builds on the previous, taking you from basic abstractions to distributed systems.
 
