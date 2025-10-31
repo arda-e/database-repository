@@ -1,10 +1,13 @@
 import { MockAdapter } from '../adapters/MockAdapter';
+import { TransactionManager } from '../transactions/TransactionManager';
 
 describe('MockAdapter', () => {
   let adapter: MockAdapter;
+  let txManager: TransactionManager;
 
   beforeEach(async () => {
-    adapter = new MockAdapter();
+    txManager = new TransactionManager({} as any);
+    adapter = new MockAdapter(txManager);
     await adapter.initialize();
   });
 
@@ -39,7 +42,7 @@ describe('MockAdapter', () => {
     await adapter.close();
 
     // Create new adapter to test
-    const newAdapter = new MockAdapter();
+    const newAdapter = new MockAdapter(txManager);
     await newAdapter.initialize();
     const result = await newAdapter.query('SELECT * FROM orders');
     expect(result).toEqual([]);

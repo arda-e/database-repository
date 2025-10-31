@@ -1,10 +1,13 @@
-import { SqliteAdapter } from '../adapters/SqliteAdapter';
+import { SqliteAdapter } from '../adapters/';
+import { TransactionManager } from '../transactions/';
 
 describe('SqliteAdapter', () => {
   let adapter: SqliteAdapter;
+  let txManager: TransactionManager;
 
   beforeEach(async () => {
-    adapter = new SqliteAdapter({ filename: ':memory:' });
+    txManager = new TransactionManager({} as any);
+    adapter = new SqliteAdapter(txManager, { filename: ':memory:' });
     await adapter.initialize();
 
     // Create test table

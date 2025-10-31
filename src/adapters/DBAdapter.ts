@@ -1,11 +1,18 @@
 import { IDatabase } from '../database/';
+import { TransactionManager } from '../transactions/TransactionManager';
 
 export abstract class DBAdapter<T> implements IDatabase {
   protected instance: T | null = null;
   protected maxRetries: number;
   protected retryDelay: number;
+  protected transactionManager: TransactionManager;
 
-  constructor(maxRetries: number = 5, retryDelay: number = 1000) {
+  constructor(
+    transactionManager: TransactionManager,
+    maxRetries: number = 5,
+    retryDelay: number = 1000
+  ) {
+    this.transactionManager = transactionManager;
     this.maxRetries = maxRetries;
     this.retryDelay = retryDelay;
   }
@@ -33,4 +40,11 @@ export abstract class DBAdapter<T> implements IDatabase {
 
   abstract query<T = any>(sql: string, params?: any[]): Promise<T>;
   abstract close(): Promise<void>;
+
+  // Helper method to get current transaction or connection
+  protected getConnection() {
+    // Check if we're in a transaction
+    const trx = this.transactionManager.getCurrentTransaction();
+    return trx || this.instance;
+  }
 }

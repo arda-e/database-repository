@@ -3,4 +3,5 @@ export interface IDatabase {
   getInstance(): any;
   query<T = any>(queryString: string, params?: any[]): Promise<T>;
   close(): Promise<void>;
+  beginTransaction?(): Promise<any>;
 }

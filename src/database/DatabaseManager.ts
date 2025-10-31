@@ -1,5 +1,6 @@
 import { IDatabase } from './IDatabase';
 import { DBAdapter, MockAdapter, KnexAdapter} from '../adapters/';
+import { TransactionManager } from '../transactions/TransactionManager';
 
 
 enum DatabaseState {
@@ -15,7 +16,7 @@ export class DatabaseManager {
   private state: DatabaseState = DatabaseState.UNINITIALIZED;
   private initializationError: Error | null = null;
   private readonly maxRetries: number;
-  private retryDelay: number;
+  private readonly retryDelay: number;
 
   constructor(maxRetries: number = 5, retryDelay: number = 1000) {
     this.maxRetries = maxRetries;
@@ -23,7 +24,8 @@ export class DatabaseManager {
   }
 
   async createDatabase<T extends DBAdapter<any>>(
-    AdapterClass: new (config: any, maxRetries?: number, retryDelay?: number) => T,
+    AdapterClass: new (transactionManager: any, config: any, maxRetries?: number, retryDelay?: number) => T,
+    transactionManager: any,
     config: any
   ): Promise<IDatabase> {
     if (this.state === DatabaseState.READY && this.instance) {
@@ -32,7 +34,7 @@ export class DatabaseManager {
 
     switch (this.state) {
       case DatabaseState.UNINITIALIZED:
-        return await this.initializeDatabase(AdapterClass, config);
+        return await this.initializeDatabase(AdapterClass, transactionManager, config);
 
       case DatabaseState.INITIALIZING:
         return await this.waitForInitialization();
@@ -45,7 +47,7 @@ export class DatabaseManager {
 
       case DatabaseState.CLOSED:
         this.state = DatabaseState.UNINITIALIZED;
-        return await this.initializeDatabase(AdapterClass, config);
+        return await this.initializeDatabase(AdapterClass, transactionManager, config);
 
       default:
         throw new Error('Unknown database state');
@@ -53,12 +55,13 @@ export class DatabaseManager {
   }
 
   private async initializeDatabase<T extends DBAdapter<any>>(
-    AdapterClass: new (config: any, maxRetries?: number, retryDelay?: number) => T,
+    AdapterClass: new (transactionManager: any, config: any, maxRetries?: number, retryDelay?: number) => T,
+    transactionManager: any,
     config: any
   ): Promise<IDatabase> {
     this.state = DatabaseState.INITIALIZING;
     try {
-      const dbInstance = new AdapterClass(config, this.maxRetries, this.retryDelay);
+      const dbInstance = new AdapterClass(transactionManager, config, this.maxRetries, this.retryDelay);
       await dbInstance.initialize();
       this.instance = dbInstance;
       this.state = DatabaseState.READY;
@@ -107,7 +110,13 @@ export async function createDatabase() {
   const manager = new DatabaseManager();
 
   if (process.env.NODE_ENV === 'test') {
-    return manager.createDatabase(MockAdapter, {});
+    // Create a mock transaction manager for tests
+    const mockTxManager = {
+      runInTransaction: async (operation: () => Promise<any>) => operation(),
+      getCurrentTransaction: () => null
+    } as TransactionManager;
+
+    return manager.createDatabase(MockAdapter, mockTxManager, {});
   }
 
   // Default to KnexAdapter with PostgreSQL config
@@ -116,5 +125,12 @@ export async function createDatabase() {
     connection: process.env.DATABASE_URL || 'postgresql://localhost:5432/test',
   };
 
-  return manager.createDatabase(KnexAdapter, knexConfig);
+  // For now, create a basic transaction manager
+  // This will be improved in the full implementation
+  const basicTxManager = {
+    runInTransaction: async (operation: () => Promise<any>) => operation(),
+    getCurrentTransaction: () => null
+  } as TransactionManager;
+
+  return manager.createDatabase(KnexAdapter, basicTxManager, knexConfig);
 }

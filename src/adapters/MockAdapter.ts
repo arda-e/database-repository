@@ -1,10 +1,15 @@
 import { DBAdapter } from './DBAdapter';
+import { TransactionManager } from '../transactions';
 
 export class MockAdapter extends DBAdapter<Map<string, any[]>> {
   private data = new Map<string, any[]>();
 
-  constructor(maxRetries?: number, retryDelay?: number) {
-    super(maxRetries, retryDelay);
+  constructor(
+    transactionManager: TransactionManager,
+    maxRetries?: number,
+    retryDelay?: number
+  ) {
+    super(transactionManager, maxRetries, retryDelay);
   }
 
   // Seed test data

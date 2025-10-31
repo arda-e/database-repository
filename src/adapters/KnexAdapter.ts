@@ -1,9 +1,15 @@
 import knex, { Knex } from 'knex';
 import { DBAdapter } from './DBAdapter';
+import { TransactionManager } from '../transactions/TransactionManager';
 
 export class KnexAdapter extends DBAdapter<Knex> {
-  constructor(private config: Knex.Config, maxRetries?: number, retryDelay?: number) {
-    super(maxRetries, retryDelay);
+  constructor(
+    transactionManager: TransactionManager,
+    private config: Knex.Config,
+    maxRetries?: number,
+    retryDelay?: number
+  ) {
+    super(transactionManager, maxRetries, retryDelay);
   }
 
   protected createInstance(): Knex {
@@ -16,10 +22,17 @@ export class KnexAdapter extends DBAdapter<Knex> {
 
   async query<T = any>(sql: string, params: any[] = []): Promise<T> {
     if (!this.instance) throw new Error('Database not initialized');
-    return this.instance.raw(sql, params) as Promise<T>;
+
+    const conn = this.getConnection();
+    return conn.raw(sql, params) as Promise<T>;
   }
 
   async close(): Promise<void> {
     await this.instance?.destroy();
+  }
+
+  async beginTransaction() {
+    if (!this.instance) throw new Error('Database not initialized');
+    return this.instance.transaction();
   }
 }
