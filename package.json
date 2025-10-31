@@ -9,9 +9,9 @@
     "test:watch": "jest --watch",
     "start": "node dist/server.js",
     "dev": "ts-node src/server.ts",
-    "db:migrate:latest": "knex migrate:latest --knexfile db/knexfile.js",
-    "db:migrate:rollback": "knex migrate:rollback --knexfile db/knexfile.js",
-    "db:seed:run": "knex seed:run --knexfile db/knexfile.js"
+    "db:migrate:latest": "knex migrate:latest --knexfile knex/knexfile.js",
+    "db:migrate:rollback": "knex migrate:rollback --knexfile knex/knexfile.js",
+    "db:seed:run": "knex seed:run --knexfile knex/knexfile.js"
   },
   "dependencies": {
     "express": "^4.18.2",

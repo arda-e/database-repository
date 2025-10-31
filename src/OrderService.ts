@@ -1,4 +1,4 @@
-import { DatabaseManager } from './database-manager';
+import { DatabaseManager } from './database';
 
 export class OrderService {
   constructor(private dbManager: DatabaseManager) {}

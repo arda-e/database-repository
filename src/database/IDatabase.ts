@@ -1,4 +1,4 @@
-export interface Database {
+export interface IDatabase {
   initialize(): Promise<void>;
   getInstance(): any;
   query<T = any>(queryString: string, params?: any[]): Promise<T>;

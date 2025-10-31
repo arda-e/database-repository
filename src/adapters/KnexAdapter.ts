@@ -1,7 +1,7 @@
 import knex, { Knex } from 'knex';
-import { DbAdapter } from './adapter';
+import { DBAdapter } from './DBAdapter';
 
-export class KnexAdapter extends DbAdapter<Knex> {
+export class KnexAdapter extends DBAdapter<Knex> {
   constructor(private config: Knex.Config, maxRetries?: number, retryDelay?: number) {
     super(maxRetries, retryDelay);
   }

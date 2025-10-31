@@ -1,7 +1,7 @@
-import { DbAdapter } from './adapter';
+import { DBAdapter } from './DBAdapter';
 import knex from 'knex';
 
-export class SqliteAdapter extends DbAdapter<knex.Knex> {
+export class SqliteAdapter extends DBAdapter<knex.Knex> {
   constructor(private config: { filename?: string }, maxRetries?: number, retryDelay?: number) {
     super(maxRetries, retryDelay);
   }

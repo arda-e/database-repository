@@ -1,6 +1,6 @@
-import { Database } from './database';
+import { IDatabase } from '../database/';
 
-export abstract class DbAdapter<T> implements Database {
+export abstract class DBAdapter<T> implements IDatabase {
   protected instance: T | null = null;
   protected maxRetries: number;
   protected retryDelay: number;

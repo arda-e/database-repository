@@ -1,8 +1,6 @@
-import { Database } from './database';
-import { DbAdapter } from './adapter';
-import { KnexAdapter } from './knex-adapter';
-import { MockAdapter } from './mock-adapter';
-import { SqliteAdapter } from './sqlite-adapter';
+import { IDatabase } from './IDatabase';
+import { DBAdapter, MockAdapter, KnexAdapter} from '../adapters/';
+
 
 enum DatabaseState {
   UNINITIALIZED = 'UNINITIALIZED',
@@ -13,10 +11,10 @@ enum DatabaseState {
 }
 
 export class DatabaseManager {
-  private instance: Database | null = null;
+  private instance: IDatabase | null = null;
   private state: DatabaseState = DatabaseState.UNINITIALIZED;
   private initializationError: Error | null = null;
-  private maxRetries: number;
+  private readonly maxRetries: number;
   private retryDelay: number;
 
   constructor(maxRetries: number = 5, retryDelay: number = 1000) {
@@ -24,10 +22,10 @@ export class DatabaseManager {
     this.retryDelay = retryDelay;
   }
 
-  async createDatabase<T extends DbAdapter<any>>(
+  async createDatabase<T extends DBAdapter<any>>(
     AdapterClass: new (config: any, maxRetries?: number, retryDelay?: number) => T,
     config: any
-  ): Promise<Database> {
+  ): Promise<IDatabase> {
     if (this.state === DatabaseState.READY && this.instance) {
       return this.instance;
     }
@@ -54,10 +52,10 @@ export class DatabaseManager {
     }
   }
 
-  private async initializeDatabase<T extends DbAdapter<any>>(
+  private async initializeDatabase<T extends DBAdapter<any>>(
     AdapterClass: new (config: any, maxRetries?: number, retryDelay?: number) => T,
     config: any
-  ): Promise<Database> {
+  ): Promise<IDatabase> {
     this.state = DatabaseState.INITIALIZING;
     try {
       const dbInstance = new AdapterClass(config, this.maxRetries, this.retryDelay);
@@ -72,7 +70,7 @@ export class DatabaseManager {
     }
   }
 
-  private async waitForInitialization(): Promise<Database> {
+  private async waitForInitialization(): Promise<IDatabase> {
     while (this.state === DatabaseState.INITIALIZING) {
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
@@ -84,7 +82,7 @@ export class DatabaseManager {
     throw this.initializationError || new Error('Database initialization failed');
   }
 
-  getDatabase(): Database {
+  getDatabase(): IDatabase {
     if (this.state !== DatabaseState.READY || this.instance === null) {
       throw new Error('Database instance has not been created yet.');
     }

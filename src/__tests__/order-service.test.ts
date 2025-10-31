@@ -1,5 +1,5 @@
-import { DatabaseManager } from '../database-manager';
-import { MockAdapter } from '../mock-adapter';
+import { DatabaseManager } from '../database/DatabaseManager';
+import { MockAdapter } from '../adapters/MockAdapter';
 
 class OrderService {
   constructor(private dbManager: DatabaseManager) {}

@@ -1,4 +1,4 @@
-import { MockAdapter } from '../mock-adapter';
+import { MockAdapter } from '../adapters/MockAdapter';
 
 describe('MockAdapter', () => {
   let adapter: MockAdapter;

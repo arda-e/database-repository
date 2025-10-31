@@ -1,4 +1,4 @@
-import { SqliteAdapter } from '../sqlite-adapter';
+import { SqliteAdapter } from '../adapters/SqliteAdapter';
 
 describe('SqliteAdapter', () => {
   let adapter: SqliteAdapter;

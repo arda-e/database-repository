@@ -1,6 +1,6 @@
-import { DbAdapter } from './adapter';
+import { DBAdapter } from './DBAdapter';
 
-export class MockAdapter extends DbAdapter<Map<string, any[]>> {
+export class MockAdapter extends DBAdapter<Map<string, any[]>> {
   private data = new Map<string, any[]>();
 
   constructor(maxRetries?: number, retryDelay?: number) {

@@ -1,6 +1,6 @@
 import express from 'express';
-import { createDatabase, DatabaseManager } from './database-manager';
-import { OrderService } from './order-service';
+import { createDatabase, DatabaseManager } from './database/DatabaseManager';
+import { OrderService } from './OrderService';
 
 const app = express();
 const port = process.env.PORT || 3000;
